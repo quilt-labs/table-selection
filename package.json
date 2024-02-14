@@ -41,6 +41,7 @@
     "build:umd": "webpack --mode production",
     "create:dist": "mkdir -p dist && mkdir -p dist/js && cp umd/* dist/js && cp dist/js/table-selection.min.js dist/js/table-selection.js",
     "preversion": "npm run docs && git reset && git add ./CHANGELOG.md ./README.md",
+    "prepare": "npm run build",
     "prepublishOnly": "git checkout master && npm run test && npm run build",
     "test": "jest",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
