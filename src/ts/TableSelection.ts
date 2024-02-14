@@ -278,5 +278,10 @@ export class TableSelection {
 
         await window.navigator.clipboard.writeText(text)
         console.log(`copied to clipboard: ${text}`)
+
+        if (this.config.copyOnSelectionCallback !== undefined) {
+            console.log(`calling copyOnSelectionCallback with text=${text}`)
+            this.config.copyOnSelectionCallback(text);
+        }
     }
 }
