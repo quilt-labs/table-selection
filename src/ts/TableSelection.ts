@@ -9,6 +9,7 @@ import { TableSelectionRange } from './interfaces/TableSelectionRange';
 import { TableSelectionTableElements } from './interfaces/TableSelectionTableElements';
 
 const defaultConfig: TableSelectionConfig = {
+    copyOnSelection: false,
     rootDocument: document,
     selector: '.table-selection',
     selectionCssMode: 'style',
@@ -34,10 +35,10 @@ export class TableSelection {
         rootDocument.head.appendChild(styles);
 
         rootDocument.addEventListener('selectionchange', () => this.onSelectionChange());
-        rootDocument.addEventListener('copy', (e) => this.copyToClipboard(e));
+        rootDocument.addEventListener('copy', (e) => this.handleCopy(e));
     }
 
-    protected onSelectionChange(): void {
+    protected async onSelectionChange(): Promise<void> {
         const selection = this.config.rootDocument.getSelection();
 
         this.deselect();
@@ -70,6 +71,11 @@ export class TableSelection {
         this.getRowsAndCells();
 
         if (this.range) {
+            if (this.config.copyOnSelection) {
+                const selectionText = this.getSelectionText(this.range);
+                await this.copyToClipboard(selectionText);
+            }
+
             this.select();
         } else {
             this.deselect();
@@ -239,14 +245,12 @@ export class TableSelection {
         }
     }
 
-    protected copyToClipboard(e: ClipboardEvent): void {
+    protected handleCopy(e: ClipboardEvent): void {
         if (! this.range || ! this.range.rows || ! e.clipboardData) {
             return;
         }
 
-        const selectionText = (this.range.rows as HTMLTableCellElement[][])
-            .map((row) => row.map((cell) => cell.innerText).join('\t'))
-            .join('\r\n');
+        const selectionText = this.getSelectionText(this.range);
 
         if (! selectionText) {
             return;
@@ -256,4 +260,23 @@ export class TableSelection {
         e.preventDefault();
     }
 
+    protected getSelectionText(range: TableSelectionRange): string {
+        return (range.rows as HTMLTableCellElement[][])
+            .map((row) => row.map((cell) => cell.innerText).join('\t'))
+            .join('\r\n');
+    }
+
+    protected async copyToClipboard(text: string): Promise<void> {
+        console.log(`copying to clipboard: ${text}`)
+        const window = this.config.rootDocument.defaultView;
+
+        if (window === null) {
+            console.warn('TableSelection: Could not access window, aborting copy to clipboard!');
+
+            return
+        }
+
+        await window.navigator.clipboard.writeText(text)
+        console.log(`copied to clipboard: ${text}`)
+    }
 }
