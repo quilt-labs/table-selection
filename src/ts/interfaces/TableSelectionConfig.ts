@@ -1,5 +1,5 @@
 export interface TableSelectionConfig {
-    copyOnSelection: boolean;
+    copyOnSelection?: boolean;
     rootDocument: Document;
     selector?: string;
     selectionCssMode?: 'style' | 'cssClass';
