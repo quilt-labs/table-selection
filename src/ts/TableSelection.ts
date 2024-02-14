@@ -38,7 +38,7 @@ export class TableSelection {
     }
 
     protected onSelectionChange(): void {
-        const selection = getSelection();
+        const selection = this.config.rootDocument.getSelection();
 
         this.deselect();
         if (! selection || selection.isCollapsed) {
