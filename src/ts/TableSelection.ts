@@ -8,30 +8,33 @@ import { TableSelectionConfig } from './interfaces/TableSelectionConfig';
 import { TableSelectionRange } from './interfaces/TableSelectionRange';
 import { TableSelectionTableElements } from './interfaces/TableSelectionTableElements';
 
+const defaultConfig: TableSelectionConfig = {
+    rootDocument: document,
+    selector: '.table-selection',
+    selectionCssMode: 'style',
+    selectionCssClass: 'selected',
+};
+
 export class TableSelection {
-
-    config: TableSelectionConfig = {
-        selector: '.table-selection',
-        selectionCssMode: 'style',
-        selectionCssClass: 'selected',
-    };
-
+    config: TableSelectionConfig;
     range: TableSelectionRange | null = null;
     elements: TableSelectionTableElements;
 
-    constructor(config: TableSelectionConfig = {}) {
-        this.config = { ...this.config, ...config };
+    constructor(config: TableSelectionConfig = defaultConfig) {
+        this.config = { ...config };
+
+        const { rootDocument } = this.config;
 
         // Hide default selection
-        const styles = document.createElement('style');
+        const styles = rootDocument.createElement('style');
         styles.innerHTML = `${this.config.selector} *::selection {
             background: transparent;
             color: inherit;
         }`;
-        document.head.appendChild(styles);
+        rootDocument.head.appendChild(styles);
 
-        document.addEventListener('selectionchange', () => this.onSelectionChange());
-        document.addEventListener('copy', (e) => this.copyToClipboard(e));
+        rootDocument.addEventListener('selectionchange', () => this.onSelectionChange());
+        rootDocument.addEventListener('copy', (e) => this.copyToClipboard(e));
     }
 
     protected onSelectionChange(): void {
