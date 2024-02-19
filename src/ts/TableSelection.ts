@@ -261,18 +261,23 @@ export class TableSelection {
     }
 
     protected getSelectionText(range: TableSelectionRange): string {
-        // log the shape of range to console
+        // get number of rows and cells in range
         const n_rows = range.rows.length;
         const n_cells = range.rows[0].length;
-        console.log(`range.rows.length=${n_rows}, range.rows[0].length=${n_cells}`)
 
-        return (range.rows as HTMLTableCellElement[][])
-            .map((row) => row.map((cell) => cell.innerText.trim()).join('\t'))
-            .join('\r\n');
+        // store array of innerText of each cell in range
+        const cellTexts: string[][] = [];
+        for (let i = 0; i < n_rows; i++) {
+            cellTexts.push([]);
+            for (let j = 0; j < n_cells; j++) {
+                cellTexts[i].push(range.rows[i][j].innerText.trim());
+            }
+        }
 
-        // return (range.rows as HTMLTableCellElement[][])
-        //     .map((row) => row.map((cell) => cell.innerText).join('\t'))
-        //     .join('\r\n');
+        // join cellTexts
+        const cellTextsJoined = cellTexts.map((row) => row.join('\t')).join('\r\n');
+
+        return cellTextsJoined;
     }
 
     protected async copyToClipboard(text: string): Promise<void> {
@@ -289,7 +294,7 @@ export class TableSelection {
         console.log(`copied to clipboard: ${text}`)
 
         if (this.config.copyOnSelectionCallback !== undefined) {
-            console.log(`calling copyOnSelectionCallback with text=${text}`)
+            // console.log(`calling copyOnSelectionCallback with text=${text}`)
             this.config.copyOnSelectionCallback(text);
         }
     }
