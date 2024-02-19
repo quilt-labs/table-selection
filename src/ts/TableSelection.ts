@@ -261,7 +261,7 @@ export class TableSelection {
     }
 
     protected getSelectionText(range: TableSelectionRange): string {
-        console.log('range:', range);
+        // console.log('range:', range);
         return (range.rows as HTMLTableCellElement[][])
             .map((row) => row.map((cell) => cell.innerText.trim()).join('\t'))
             .join('\r\n');
