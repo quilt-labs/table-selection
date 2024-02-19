@@ -262,8 +262,12 @@ export class TableSelection {
 
     protected getSelectionText(range: TableSelectionRange): string {
         return (range.rows as HTMLTableCellElement[][])
-            .map((row) => row.map((cell) => cell.innerText).join('\t'))
+            .map((row) => row.map((cell) => cell.innerText.trim()).join('\t'))
             .join('\r\n');
+
+        // return (range.rows as HTMLTableCellElement[][])
+        //     .map((row) => row.map((cell) => cell.innerText).join('\t'))
+        //     .join('\r\n');
     }
 
     protected async copyToClipboard(text: string): Promise<void> {
