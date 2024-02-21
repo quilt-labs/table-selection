@@ -324,20 +324,23 @@ export class TableSelection {
     const mergedCellTexts = this.mergeCellTexts(cellTexts);
 
     // manipulate merged cell texts
-    const manipulatedMergedCellTexts = this.manipulateMergedCellTexts(mergedCellTexts);
+    const manipulatedMergedCellTexts =
+      this.manipulateMergedCellTexts(mergedCellTexts);
 
     // for each thing in cellTexts, mergedCellTexts, and manipulatedMergedCellTexts, log it with the name
-    console.log("cellTexts");
-    console.log(cellTexts);
+    // console.log("cellTexts");
+    // console.log(cellTexts);
 
-    console.log("mergedCellTexts");
-    console.log(mergedCellTexts);
+    // console.log("mergedCellTexts");
+    // console.log(mergedCellTexts);
 
-    console.log("manipulatedMergedCellTexts");
-    console.log(manipulatedMergedCellTexts);
+    // console.log("manipulatedMergedCellTexts");
+    // console.log(manipulatedMergedCellTexts);
 
     // join cellTexts
-    const cellTextsJoined = manipulatedMergedCellTexts.map((row) => row.join("\t")).join("\r\n");
+    const cellTextsJoined = manipulatedMergedCellTexts
+      .map((row) => row.join("\t"))
+      .join("\r\n");
 
     return cellTextsJoined;
   }
@@ -355,10 +358,11 @@ export class TableSelection {
     return mergedCellTexts;
   }
 
-  protected manipulateString(input: string): string {
-    // Replace any type of dash with a '0'
-    input = input.replace(/[-–—]/g, "0");
-
+  manipulateString(input: string): string {
+    // Replace any type of dash with a '0' but only if there is no text characters in input
+    if (!input.match(/[a-zA-Z]/)) {
+      input = input.replace(/[-–—]/g, "0");
+    }
     // Replace the opening parenthesis with a negative sign if there's no closing parenthesis
     const hasOpeningWithoutClosing =
       input.includes("(") && !input.includes(")");
@@ -369,7 +373,7 @@ export class TableSelection {
     return input;
   }
 
-  protected canMergeCells(
+  canMergeCells(
     str1: string,
     str2: string,
     allowedUnits: string[] = ["$", "%", "bps", "pts"]
@@ -381,8 +385,7 @@ export class TableSelection {
     const containsAllowedUnit = (str: string) =>
       allowedUnits.some((unit) => str.includes(unit));
 
-    const isNumericOrSpecial = (str: string) => 
-      /^[0-9.,()-]+$/.test(str);
+    const isNumericOrSpecial = (str: string) => /^[0-9.,()-]+$/.test(str);
 
     if (containsAllowedUnit(str1) && isNumericOrSpecial(str2)) return true;
     if (containsAllowedUnit(str2) && isNumericOrSpecial(str1)) return true;
