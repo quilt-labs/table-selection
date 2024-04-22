@@ -1,5 +1,7 @@
+<!--
 # TableSelection
 Adds **rectangular selection** to **HTML tables** to allow copy of specific columns and rows without copying contents of other cells in range.
+
 
 ![](examples/table-selection-demo.gif)
 
@@ -112,6 +114,7 @@ new TableSelection({ selector: 'table' });
 [View live example on Codepen](https://codepen.io/opznhaarlems/full/YzrxmOr)
 
 <br/>
+-->
 
 <a name="license"></a>
 ## License
